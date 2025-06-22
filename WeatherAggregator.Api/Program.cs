@@ -52,6 +52,7 @@ builder.Services.AddScoped<MetNorwayService>();
 builder.Services.AddSingleton<XsltTransformService>();
 builder.Services.AddSingleton<XsltTransformService>();
 builder.Services.AddLogging();
+builder.Services.AddSingleton<XmlValidationService>();
 
 
 // 2. Middleware

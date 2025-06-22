@@ -23,7 +23,6 @@ C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\obj\Debug
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\obj\Debug\net8.0\WeatherAggregator.Api.pdb
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\obj\Debug\net8.0\WeatherAggregator.Api.genruntimeconfig.cache
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\obj\Debug\net8.0\ref\WeatherAggregator.Api.dll
-C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\bin\Debug\net8.0\Schemas\WeatherReport.xsd
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\bin\Debug\net8.0\Stylesheets\WeatherReport.xslt
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll

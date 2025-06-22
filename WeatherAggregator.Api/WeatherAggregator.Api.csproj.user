@@ -6,8 +6,8 @@
     <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
   </PropertyGroup>
   <ItemGroup>
-    <None Update="Schemas\WeatherReport.xsd">
+    <EmbeddedResource Update="Schemas\WeatherReport.xsd">
       <SubType>Designer</SubType>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
