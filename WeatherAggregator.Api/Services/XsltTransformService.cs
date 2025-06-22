@@ -33,7 +33,7 @@ namespace WeatherAggregator.Api.Services
 
         public string TransformXml(string xmlContent)
         {
-            if (!_isLoaded) return $"<html><body><h1>Error</h1><pre>{_loadErrorMessage}</pre></body></html>";
+            if (!_isLoaded) return $"<div class='error'><h1>Error</h1><pre>{_loadErrorMessage}</pre></div>";
             try
             {
                 using var sr = new StringReader(xmlContent);
@@ -42,7 +42,7 @@ namespace WeatherAggregator.Api.Services
                 _xslTransform.Transform(xr, null, sw);
                 return sw.ToString();
             }
-            catch (Exception ex) { return $"<html><body><h1>Transform Error</h1><pre>{ex.ToString()}</pre></body></html>"; }
+            catch (Exception ex) { return $"<div class='error'><h1>Transform Error</h1><pre>{ex.ToString()}</pre></div>"; }
         }
     }
 }

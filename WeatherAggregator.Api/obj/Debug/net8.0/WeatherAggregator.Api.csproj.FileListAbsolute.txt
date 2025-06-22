@@ -35,3 +35,4 @@ C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\bin\Debug
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\obj\Debug\net8.0\WeatherAggregator.Api.csproj.AssemblyReference.cache
 C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\obj\Debug\net8.0\WeatherAggregator.Api.csproj.CopyComplete
+C:\Users\asus\source\repos\WeatherAggregator.Api\WeatherAggregator.Api\obj\Debug\net8.0\WeatherAggregator.Api.sourcelink.json

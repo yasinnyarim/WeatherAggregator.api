@@ -50,6 +50,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<GeocodingService>();
 builder.Services.AddScoped<MetNorwayService>();
 builder.Services.AddSingleton<XsltTransformService>();
+builder.Services.AddSingleton<XsltTransformService>();
 builder.Services.AddLogging();
 
 
