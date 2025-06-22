@@ -65,46 +65,51 @@ namespace WeatherAggregator.Api.Controllers
             return Content(htmlContent, "text/html");
         }
 
-        // === XML DOĞRULAMA ENDPOINT'İ (DÜZELTİLMİŞ HALİ) ===
-        [HttpPost("validate")]
+        [HttpPost("validate/xsd")]
         [Authorize]
         [Consumes("application/xml")]
-        public async Task<IActionResult> ValidateWeatherReport()
+        public async Task<IActionResult> ValidateWithXsd()
+        {
+            string xmlContent = await new StreamReader(Request.Body, Encoding.UTF8).ReadToEndAsync();
+            if (string.IsNullOrEmpty(xmlContent))
+            {
+                return BadRequest(new { message = "Request body cannot be empty." });
+            }
+            var (isValid, errors) = _xmlValidationService.ValidateWithXsd(xmlContent);
+            if (!isValid)
+            {
+                return BadRequest(new { message = "XSD validation failed.", validationErrors = errors });
+            }
+            return Ok(new { message = "XML is valid according to XSD." });
+        }
+
+        [HttpPost("validate/dtd")]
+        [Authorize]
+        [Consumes("application/xml")]
+        public async Task<IActionResult> ValidateWithDtd()
         {
             string xmlContent;
             using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
                 xmlContent = await reader.ReadToEndAsync();
+                if (xmlContent.StartsWith("<?xml"))
+                {
+                    xmlContent = xmlContent.Substring(xmlContent.IndexOf('>') + 1).Trim();
+                }
             }
-
             if (string.IsNullOrEmpty(xmlContent))
             {
                 return BadRequest(new { message = "Request body cannot be empty." });
             }
-
-            // Yeni Validate metodunu çağırıyoruz.
-            var (isValid, errors) = _xmlValidationService.Validate(xmlContent);
-
+            var (isValid, errors) = _xmlValidationService.ValidateWithDtd(xmlContent);
             if (!isValid)
             {
-                return BadRequest(new { message = "XML validation failed.", validationErrors = errors });
+                return BadRequest(new { message = "DTD validation failed.", validationErrors = errors });
             }
-
-            try
-            {
-                var serializer = new XmlSerializer(typeof(UnifiedWeatherReport));
-                using var stringReader = new StringReader(xmlContent);
-                var report = (UnifiedWeatherReport?)serializer.Deserialize(stringReader);
-
-                return Ok(new { message = "XML is valid and successfully deserialized.", receivedCity = report?.City });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"XML was valid but could not be deserialized. Error: {ex.Message}");
-            }
+            return Ok(new { message = "XML is valid according to DTD." });
         }
 
-        // Yardımcı metod (kod tekrarını önler)
+        // === EKSİK OLAN VE GERİ EKLENEN YARDIMCI METOD ===
         private async Task<UnifiedWeatherReport?> GetWeatherReport(string city)
         {
             var coordinates = await _geocodingService.GetCoordinatesAsync(city);
