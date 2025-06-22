@@ -20,7 +20,7 @@ namespace WeatherAggregator.Api.Services
                     .FirstOrDefault(str => str.EndsWith("WeatherReport.xslt"));
                 if (string.IsNullOrEmpty(resourceName))
                 {
-                    _loadErrorMessage = "Embedded resource 'WeatherReport.xslt' not found. Ensure its Build Action is 'Embedded Resource'.";
+                    _loadErrorMessage = "Embedded resource 'WeatherReport.xslt' not found.";
                     return;
                 }
                 using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
