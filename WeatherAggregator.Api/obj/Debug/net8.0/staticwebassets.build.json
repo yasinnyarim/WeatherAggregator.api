@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "l8vLdjIEEXa3mcuUe1L3jZG1oIazBkwMprSCfgCBVig=",
+  "Source": "WeatherAggregator.Api",
+  "BasePath": "_content/WeatherAggregator.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

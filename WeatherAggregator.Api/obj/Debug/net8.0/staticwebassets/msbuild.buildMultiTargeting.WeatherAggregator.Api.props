@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\WeatherAggregator.Api.props" />
+</Project>
