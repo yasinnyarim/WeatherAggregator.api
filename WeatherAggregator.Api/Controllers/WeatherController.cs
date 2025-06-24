@@ -1,120 +1,61 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Xml;
 using System.Xml.Serialization;
 using WeatherAggregator.Api.Models;
 using WeatherAggregator.Api.Services;
 
 namespace WeatherAggregator.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/v1/[controller]"), ApiController, Authorize]
     public class WeatherController : ControllerBase
     {
-        private readonly GeocodingService _geocodingService;
-        private readonly MetNorwayService _metNorwayService;
-        private readonly XsltTransformService _xsltTransformService;
-        private readonly XmlValidationService _xmlValidationService;
+        private readonly GeocodingService _geo;
+        private readonly MetNorwayService _met;
+        private readonly XsltTransformService _xslt;
+        private readonly XmlValidationService _xmlValidation;
+        public WeatherController(GeocodingService g, MetNorwayService m, XsltTransformService x, XmlValidationService v)
+        { _geo = g; _met = m; _xslt = x; _xmlValidation = v; }
 
-        public WeatherController(
-            GeocodingService geocodingService,
-            MetNorwayService metNorwayService,
-            XsltTransformService xsltTransformService,
-            XmlValidationService xmlValidationService)
-        {
-            _geocodingService = geocodingService;
-            _metNorwayService = metNorwayService;
-            _xsltTransformService = xsltTransformService;
-            _xmlValidationService = xmlValidationService;
-        }
-
-        [HttpGet("{city}")]
-        [Authorize]
-        [Produces("application/xml")]
+        [HttpGet("{city}"), Produces("application/xml")]
         public async Task<IActionResult> GetWeather(string city)
         {
             var report = await GetWeatherReport(city);
-            if (report == null)
-            {
-                return StatusCode(500, "Failed to retrieve or process weather data.");
-            }
+            if (report == null) return StatusCode(500, "Failed to get data.");
             return Ok(report);
         }
 
-        [HttpGet("{city}/report")]
-        [Authorize]
-        [Produces("text/html")]
+        [HttpGet("{city}/report"), Produces("text/html")]
         public async Task<IActionResult> GetWeatherReportAsHtml(string city)
         {
             var report = await GetWeatherReport(city);
-            if (report == null)
-            {
-                return Content("Error: Data not found.", "text/html");
-            }
-
-            string xmlContent;
+            if (report == null) return Content("Error: Data not found.", "text/html");
             var serializer = new XmlSerializer(typeof(UnifiedWeatherReport));
-            using (var stringWriter = new StringWriter())
-            {
-                serializer.Serialize(stringWriter, report);
-                xmlContent = stringWriter.ToString();
-            }
-
-            string htmlContent = _xsltTransformService.TransformXml(xmlContent);
-            return Content(htmlContent, "text/html");
+            using var stringWriter = new StringWriter();
+            serializer.Serialize(stringWriter, report);
+            return Content(_xslt.TransformXml(stringWriter.ToString()), "text/html");
         }
 
-        [HttpPost("validate/xsd")]
-        [Authorize]
-        [Consumes("application/xml")]
+        [HttpPost("validate/xsd"), Consumes("application/xml")]
         public async Task<IActionResult> ValidateWithXsd()
         {
-            string xmlContent = await new StreamReader(Request.Body, Encoding.UTF8).ReadToEndAsync();
-            if (string.IsNullOrEmpty(xmlContent))
-            {
-                return BadRequest(new { message = "Request body cannot be empty." });
-            }
-            var (isValid, errors) = _xmlValidationService.ValidateWithXsd(xmlContent);
-            if (!isValid)
-            {
-                return BadRequest(new { message = "XSD validation failed.", validationErrors = errors });
-            }
+            var (isValid, errors) = _xmlValidation.ValidateWithXsd(await new StreamReader(Request.Body).ReadToEndAsync());
+            if (!isValid) return BadRequest(new { message = "XSD validation failed.", validationErrors = errors });
             return Ok(new { message = "XML is valid according to XSD." });
         }
 
-        [HttpPost("validate/dtd")]
-        [Authorize]
-        [Consumes("application/xml")]
+        [HttpPost("validate/dtd"), Consumes("application/xml")]
         public async Task<IActionResult> ValidateWithDtd()
         {
-            string xmlContent;
-            using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
-            {
-                xmlContent = await reader.ReadToEndAsync();
-                if (xmlContent.StartsWith("<?xml"))
-                {
-                    xmlContent = xmlContent.Substring(xmlContent.IndexOf('>') + 1).Trim();
-                }
-            }
-            if (string.IsNullOrEmpty(xmlContent))
-            {
-                return BadRequest(new { message = "Request body cannot be empty." });
-            }
-            var (isValid, errors) = _xmlValidationService.ValidateWithDtd(xmlContent);
-            if (!isValid)
-            {
-                return BadRequest(new { message = "DTD validation failed.", validationErrors = errors });
-            }
+            var (isValid, errors) = _xmlValidation.ValidateWithDtd(await new StreamReader(Request.Body).ReadToEndAsync());
+            if (!isValid) return BadRequest(new { message = "DTD validation failed.", validationErrors = errors });
             return Ok(new { message = "XML is valid according to DTD." });
         }
 
-        // === EKSİK OLAN VE GERİ EKLENEN YARDIMCI METOD ===
         private async Task<UnifiedWeatherReport?> GetWeatherReport(string city)
         {
-            var coordinates = await _geocodingService.GetCoordinatesAsync(city);
-            if (coordinates == null) return null;
-            return await _metNorwayService.GetWeatherAsync(city, coordinates.Value.Latitude, coordinates.Value.Longitude);
+            var coords = await _geo.GetCoordinatesAsync(city);
+            if (coords == null) return null;
+            return await _met.GetWeatherAsync(city, coords.Value.Latitude, coords.Value.Longitude);
         }
     }
 }

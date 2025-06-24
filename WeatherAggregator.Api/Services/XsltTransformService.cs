@@ -7,8 +7,8 @@ namespace WeatherAggregator.Api.Services
     public class XsltTransformService
     {
         private readonly XslCompiledTransform _xslTransform;
-        private readonly bool _isLoaded = false;
-        private readonly string _loadErrorMessage = "Stylesheet could not be loaded.";
+        private bool _isLoaded = false;
+        private string _errorMessage = "Stylesheet could not be loaded.";
 
         public XsltTransformService()
         {
@@ -20,7 +20,7 @@ namespace WeatherAggregator.Api.Services
                     .FirstOrDefault(str => str.EndsWith("WeatherReport.xslt"));
                 if (string.IsNullOrEmpty(resourceName))
                 {
-                    _loadErrorMessage = "Embedded resource 'WeatherReport.xslt' not found.";
+                    _errorMessage = "Embedded resource 'WeatherReport.xslt' not found.";
                     return;
                 }
                 using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
@@ -28,12 +28,12 @@ namespace WeatherAggregator.Api.Services
                 _xslTransform.Load(reader);
                 _isLoaded = true;
             }
-            catch (Exception ex) { _loadErrorMessage = ex.ToString(); }
+            catch (Exception ex) { _errorMessage = ex.ToString(); }
         }
 
         public string TransformXml(string xmlContent)
         {
-            if (!_isLoaded) return $"<div class='error'><h1>Error</h1><pre>{_loadErrorMessage}</pre></div>";
+            if (!_isLoaded) return $"<div class='error'><h1>Error</h1><pre>{_errorMessage}</pre></div>";
             try
             {
                 using var sr = new StringReader(xmlContent);

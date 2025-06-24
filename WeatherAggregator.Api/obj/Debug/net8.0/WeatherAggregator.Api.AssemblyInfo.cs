@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WeatherAggregator.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ca9fe9e8613a04f688da62a4d72471ce1ed1c0d2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6f7eed7fd8685aec54c48876fd377c0696d74628")]
 [assembly: System.Reflection.AssemblyProductAttribute("WeatherAggregator.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WeatherAggregator.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
